@@ -50,5 +50,6 @@ log "Imaging $IMAGEFILE to $DEVICE"
 ulimit -v 1048576
 qemu-img convert -t directsync -O host_device $IMAGEFILE $DEVICE
 sync
+parted -m -s $DEVICE resizepart 1 50GiB
 
 log "${DEVICE} imaged successfully!"
