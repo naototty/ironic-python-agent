@@ -50,14 +50,15 @@ log "Imaging $IMAGEFILE to $DEVICE"
 ulimit -v 1048576
 qemu-img convert -t directsync -O host_device $IMAGEFILE $DEVICE
 sync
+
 parted -m -s $DEVICE resizepart 1 40GiB
 
 ## ## parted -m -s $DEVICE unit MiB mkpart ext4 
-## parted -m -s /dev/sda unit MiB print > /tmp/part-sda
-## 
-## start_mb=$(grep -e '^1:' /tmp/part-sda | cut -d':' -f3 | sed -e 's/MiB//g')
-## end_mb=$(( $start_mb + 1024 * 400 ))
-## 
-## parted -m -s /dev/sda unit MiB mkpart ext4 ${start_mb}MiB ${end_mb}MiB
+parted -m -s /dev/sda unit MiB print > /tmp/part-sda
+ 
+start_mb=$(grep -e '^1:' /tmp/part-sda | cut -d':' -f3 | sed -e 's/MiB//g')
+end_mb=$(( $start_mb + 1024 * 400 ))
+
+parted -m -s /dev/sda unit MiB mkpart primary ext4 ${start_mb}MiB ${end_mb}MiB
 
 log "${DEVICE} imaged successfully!"
